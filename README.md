@@ -169,12 +169,13 @@ To deal with this very small datasets problem, we have used the following classe
  <b>train</b> method in <a href="./TensorflowUNet.py">TensorflowUNet</a> class.
 class.<br>
 <li>
-<a href="./ImageMaskDatasetGenerator.py"> ImageMaskDatasetGenerator</a> 
+<a href="./ImageMaskDatasetGenerator.py">ImageMaskDatasetGenerator</a> 
 </li>
 <li>
 <a href="./ImageMaskAugmentor.py">ImageMaskAugmentor</a>
 </li>
-
+Please note that <b>generate</b> method in ImageMaskDatasetGenerator class yields (X, Y), where X is a set of augmented images 
+and Y a set of augmented masks corresponding to X.
 <br>
 <h2>
 4 Train TensorflowUNet Model by ImageMaskDatasetGenerator
