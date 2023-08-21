@@ -303,7 +303,7 @@ dataset, which is a very small dataset including only seven images.<pre>
 </pre>
 , which simply runs the following command.<br>
 <pre>
->python ../../TensorflowUNetInfer.py ./train_eval_infer.config
+>python ../../TensorflowUNetInferencer.py ./train_eval_infer.config
 </pre>
 
 <b>Input images (mini_test) </b><br>
