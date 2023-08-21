@@ -191,7 +191,6 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
       config_file = sys.argv[1]
 
-    # Create a UNetMolde and compile
     model   = TensorflowUNet(config_file)
         
     train_gen = ImageMaskDatasetGenerator(config_file, dataset=TRAIN)
@@ -201,9 +200,8 @@ if __name__ == "__main__":
     valid_generator = valid_gen.generate()
 
     model.train(train_generator, valid_generator)
-    
   except:
-    traceback.print_exc()
+      traceback.print_exc()
 </pre>
 
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
