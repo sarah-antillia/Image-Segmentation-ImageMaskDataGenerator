@@ -306,13 +306,13 @@ dataset, which is a very small dataset including only seven images.<pre>
 >python ../../TensorflowUNetInferencer.py ./train_eval_infer.config
 </pre>
 
-<b>Input images (mini_test) </b><br>
+<b>Input images (Retinal-Vessel/test/images) </b><br>
 <img src="./asset/test.png" width="1024" height="auto"><br>
 <br>
-<b>Ground truth masks (mini_test_mask) </b><br>
+<b>Ground truth masks (Retinal-Vessel/test/masks) </b><br>
 <img src="./asset/test_mask.png" width="1024" height="auto"><br>
 <br>
-<b>Infered masks (mini_test_output)</b><br>
+<b>Inferred masks (test_output)</b><br>
 <img src="./asset/test_output.png" width="1024" height="auto"><br><br>
 
 
