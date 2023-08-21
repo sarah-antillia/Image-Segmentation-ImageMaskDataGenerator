@@ -201,6 +201,7 @@ if __name__ == "__main__":
     valid_generator = valid_gen.generate()
 
     model.train(train_generator, valid_generator)
+
   except:
     traceback.print_exc()
 </pre>
