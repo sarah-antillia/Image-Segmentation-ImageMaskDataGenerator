@@ -286,7 +286,7 @@ Please run the following bat file.<br>
 </pre>
 , which simply run the following command.<br>
 <pre>
->python ../../TensorflowUNetTrainer.py ./train_eval_infer.config
+>python ../../TensorflowUNetEvaluator.py ./train_eval_infer.config
 </pre>
 The evaluation result of this time is the following.<br>
 <img src="./asset/evaluate_console_output_at_epoch_20_0822.png" width="720" height="auto"><br>
