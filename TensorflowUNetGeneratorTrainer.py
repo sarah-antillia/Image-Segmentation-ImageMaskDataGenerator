@@ -43,15 +43,11 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
       config_file = sys.argv[1]
 
-    config   = ConfigParser(config_file)
-
     # Create a UNetMolde and compile
     model   = TensorflowUNet(config_file)
-    
-    
+        
     train_gen = ImageMaskDatasetGenerator(config_file, dataset=TRAIN)
     train_generator = train_gen.generate()
-
 
     valid_gen = ImageMaskDatasetGenerator(config_file, dataset=EVAL)
     valid_generator = valid_gen.generate()
