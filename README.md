@@ -69,21 +69,20 @@ You can see the following folder structure in Image-Segmentation-Retinal-Vessel 
         ├─eval
         ├─generator
         │  └─CHASEDB1
-        ├─mini_test
-        ├─mini_test_output
-        ├─mini_test_output_merged
-        ├─mini_tes_mask
         ├─models
-        └─Retinal-Vessel
-            ├─test
-            │  ├─images
-            │  └─masks
-            ├─train
-            │  ├─images
-            │  └─masks
-            └─valid
-                ├─images
-                └─masks
+        ├─Retinal-Vessel
+        │  ├─test
+        │  │  ├─images
+        │  │  └─masks
+        │  ├─train
+        │  │  ├─images
+        │  │  └─masks
+        │  └─valid
+        │      ├─images
+        │      └─masks
+        ├─test_output
+        └─test_output_merged
+
 </pre>
 <h3>2.2 Install python packages</h3>
 
