@@ -174,7 +174,8 @@ class.<br>
 <li>
 <a href="./ImageMaskAugmentor.py">ImageMaskAugmentor</a>
 </li>
-Please note that <b>generate</b> method in ImageMaskDatasetGenerator class yields (X, Y), where X is a set of augmented images 
+Please note that <b>generate</b> method in ImageMaskDatasetGenerator class yields a pair of images and masks, (X, Y), 
+where X is a set of augmented images 
 and Y a set of augmented masks corresponding to X.
 <br>
 <h2>
