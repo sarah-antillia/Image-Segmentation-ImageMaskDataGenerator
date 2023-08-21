@@ -178,17 +178,17 @@ class.<br>
 
 <br>
 <h2>
-4 Train TensorflowUNet Model
+4 Train TensorflowUNet Model by ImageMaskDatasetGenerator
 </h2>
- We have trained Retinal-Vessel TensorflowUNet Model by using the following
- <b>train_eval_infer.config</b> file. <br>
+ We have trained Retinal-Vessel TensorflowUNet Model by using 
+ <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>. <br>
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
 <pre>
->1.train.bat
+>1.train_by_generator.bat
 </pre>
 , which simply runs the following command.<br>
 <pre>
->python ../../TensorflowUNetTrainer.py ./train_eval_infer.config
+>python ../../TensorflowUNetGeneratorTrainer.py ./train_eval_infer.config
 </pre>
 , where train_eval_infer.config is the following.
 <pre>
