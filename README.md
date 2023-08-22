@@ -186,7 +186,6 @@ and Y a set of augmented masks corresponding to X.
 The main part of TensorflowUNetGeneratorTrainer.py is the following.<br>
 <pre>
 if __name__ == "__main__":
-  try:
     config_file    = "./train_eval_infer.config"
     if len(sys.argv) == 2:
       config_file = sys.argv[1]
