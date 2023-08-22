@@ -166,8 +166,7 @@ Retinal-Vessel
 As shown above, Retinal-Vessel/train/images folder contains only 18 images, which is apparently too few to use for the training of the
 TensorflowUNet model. 
 To deal with this very small datasets problem, we have used the following classes to augment images and masks in the training process of
- <b>train</b> method in <a href="./TensorflowUNet.py">TensorflowUNet</a> class.
-class.<br>
+ <b>train</b> method in <a href="./TensorflowUNet.py">TensorflowUNet</a> classs.<br>
 <li>
 <a href="./ImageMaskDatasetGenerator.py">ImageMaskDatasetGenerator</a> 
 </li>
