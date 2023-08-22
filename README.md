@@ -183,24 +183,6 @@ and Y a set of augmented masks corresponding to X.
 </h2>
  We have trained Retinal-Vessel TensorflowUNet Model by using 
  <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>. <br>
-The main part of TensorflowUNetGeneratorTrainer.py is the following.<br>
-<pre>
-if __name__ == "__main__":
-    config_file    = "./train_eval_infer.config"
-    if len(sys.argv) == 2:
-      config_file = sys.argv[1]
-
-    model   = TensorflowUNet(config_file)
-        
-    train_gen = ImageMaskDatasetGenerator(config_file, dataset=TRAIN)
-    train_generator = train_gen.generate()
-
-    valid_gen = ImageMaskDatasetGenerator(config_file, dataset=EVAL)
-    valid_generator = valid_gen.generate()
-
-    model.train(train_generator, valid_generator)
-</pre>
-
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
 <pre>
 >1.train_by_generator.bat
