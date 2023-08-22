@@ -137,7 +137,7 @@ Please note that it contains only 28 jpg Image files of 999x960 pixel size, whic
  This script will perform following image processing.<br>
  <pre>
  1 Resize all jpg and png files in <b>CHASEDB1</b> folder to 512x512 square images.
- 2 Split image and mask files in <b>CHASEDB1</b> folder into test, train, valid dataset.
+ 2 Split image and mask files in <b>CHASEDB1</b> folder into test, train and valid dataset.
 </pre>
 For simplicity, please note that we have used the <b>2ndHO.png </b> type mask files.<br>
 
