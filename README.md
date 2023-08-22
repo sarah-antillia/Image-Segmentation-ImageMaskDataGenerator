@@ -21,7 +21,7 @@ https://blogs.kingston.ac.uk/retinal/chasedb1/
 We use Python 3.8.10 to run tensoflow 2.10.1 on Windows11.<br>
 <h3>1.1 Install Microsoft Visual Studio Community</h3>
 Please install <a href="https://visualstudio.microsoft.com/ja/vs/community/">Microsoft Visual Studio Community</a>, 
-which can be ITed to compile source code of 
+which can be used to compile source code of 
 <a href="https://github.com/cocodataset/cocoapi">cocoapi</a> for PythonAPI.<br>
 <h3>1.2 Create a python virtualenv </h3>
 Please run the following command to create a python virtualenv of name <b>py38-unet</b>.
@@ -52,17 +52,17 @@ You have to modify extra_compiler_args in setup.py in the following way:
 
 <br>
 <h2>
-2. Installing Image-Segmentation-Retinal-Vessel
+2. Installing Image-Segmentation-ImageMaskDataGenerator
 </h2>
 <h3>2.1 Clone repository</h3>
-Please clone Image-Segmentation-Retinal-Vessel.git in the working folder <b>c:\google</b>.<br>
+Please clone Image-Segmentation-ImageMaskDataGenerator.git in the working folder <b>c:\google</b>.<br>
 <pre>
->git clone https://github.com/atlan-antillia/Image-Segmentation-Retinal-Vessel.git<br>
+>git clone https://github.com/sarah-antillia/Image-Segmentation-ImageMaskDataGenerator<br>
 </pre>
-You can see the following folder structure in Image-Segmentation-Retinal-Vessel of the working folder.<br>
+You can see the following folder structure in Image-Segmentation-ImageMaskDataGenerator of the working folder.<br>
 
 <pre>
-./Image-Segmentation-Retinal-Vessel
+./Image-Segmentation-ImageMaskDataGenerator
 ├─asset
 └─projects
     └─Retinal-Vessel
@@ -88,7 +88,7 @@ You can see the following folder structure in Image-Segmentation-Retinal-Vessel 
 
 Please run the following command to install python packages for this project.<br>
 <pre>
->cd ./Image-Segmentation-Retinal-Vessel
+>cd ./Image-Segmentation-ImageMaskDataGenerator
 >pip install -r requirements.txt
 </pre>
 
@@ -137,7 +137,7 @@ Please note that it contains only 28 jpg Image files of 999x960 pixel size, whic
  This script will perform following image processing.<br>
  <pre>
  1 Resize all jpg and png files in <b>CHASEDB1</b> folder to 512x512 square images.
- 2 Split image and mask files in <b>CHASEDB1</b> folder into test, train, valid dataset.
+ 2 Split image and mask files in <b>CHASEDB1</b> folder into test, train and valid dataset.
 </pre>
 For simplicity, please note that we have used the <b>2ndHO.png </b> type mask files.<br>
 
@@ -165,9 +165,8 @@ Retinal-Vessel
 <img src="./asset/train_masks.png" width="1024" height="auto"><br>
 As shown above, Retinal-Vessel/train/images folder contains only 18 images, which is apparently too few to use for the training of the
 TensorflowUNet model. 
-To deal with this very small datasets problem, we have used the following classes to augment images and masks in the traing process of
- <b>train</b> method in <a href="./TensorflowUNet.py">TensorflowUNet</a> class.
-class.<br>
+To deal with this very small datasets problem, we have used the following classes to augment images and masks in the training process of
+ <b>train</b> method in <a href="./TensorflowUNet.py">TensorflowUNet</a> classs.<br>
 <li>
 <a href="./ImageMaskDatasetGenerator.py">ImageMaskDatasetGenerator</a> 
 </li>
@@ -183,27 +182,6 @@ and Y a set of augmented masks corresponding to X.
 </h2>
  We have trained Retinal-Vessel TensorflowUNet Model by using 
  <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>. <br>
-The main part of TensorflowUNetGeneratorTrainer.py is the following.<br>
-<pre>
-if __name__ == "__main__":
-  try:
-    config_file    = "./train_eval_infer.config"
-    if len(sys.argv) == 2:
-      config_file = sys.argv[1]
-
-    model   = TensorflowUNet(config_file)
-        
-    train_gen = ImageMaskDatasetGenerator(config_file, dataset=TRAIN)
-    train_generator = train_gen.generate()
-
-    valid_gen = ImageMaskDatasetGenerator(config_file, dataset=EVAL)
-    valid_generator = valid_gen.generate()
-
-    model.train(train_generator, valid_generator)
-  except:
-      traceback.print_exc()
-</pre>
-
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
 <pre>
 >1.train_by_generator.bat
