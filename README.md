@@ -21,7 +21,7 @@ https://blogs.kingston.ac.uk/retinal/chasedb1/
 We use Python 3.8.10 to run tensoflow 2.10.1 on Windows11.<br>
 <h3>1.1 Install Microsoft Visual Studio Community</h3>
 Please install <a href="https://visualstudio.microsoft.com/ja/vs/community/">Microsoft Visual Studio Community</a>, 
-which can be ITed to compile source code of 
+which can be used to compile source code of 
 <a href="https://github.com/cocodataset/cocoapi">cocoapi</a> for PythonAPI.<br>
 <h3>1.2 Create a python virtualenv </h3>
 Please run the following command to create a python virtualenv of name <b>py38-unet</b>.
