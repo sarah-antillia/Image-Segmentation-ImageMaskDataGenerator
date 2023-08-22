@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
     model.train(train_generator, valid_generator)
   except:
-      traceback.print_exc()
+    traceback.print_exc()
 </pre>
 
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
