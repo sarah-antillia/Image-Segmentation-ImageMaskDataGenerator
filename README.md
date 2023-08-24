@@ -14,7 +14,7 @@ Retinal Image Analysis<br>
 <pre>
 https://blogs.kingston.ac.uk/retinal/chasedb1/
 </pre>
-<li>2023/08/25: Fixed some section name setting bugs in ImageMaskDatasetGenerator.py </li>
+<li>2023/08/25: Fixed some section name setting bugs in ImageMaskAugmentor.py </li>
 <h2>
 1. Installing tensorflow on Windows11
 </h2>

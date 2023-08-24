@@ -15,7 +15,7 @@
 
 # ImageMaskAugmentor.py
 # 2023/08/20 to-arai
-# 2023/08/24 Fixed bugs on some wrong section name settings.
+# 2023/08/25 Fixed bugs on some wrong section name settings.
 
 import os
 import sys
