@@ -15,6 +15,7 @@
 
 # ImageMaskAugmentor.py
 # 2023/08/20 to-arai
+# 2023/08/24 Fixed bugs on some wrong section name settings.
 
 import os
 import sys
@@ -24,18 +25,21 @@ from ConfigParser import ConfigParser
 
 MODEL     = "model"
 GENERATOR = "generator"
+AUGMENTOR = "augmentor"
 
 class ImageMaskAugmentor:
   
   def __init__(self, config_file):
     self.config  = ConfigParser(config_file)
-    self.rotation = self.config.get(GENERATOR, "rotation", dvalue=True)
+    self.debug    = self.config.get(GENERATOR, "debug",  dvalue=True)
 
-    self.ANGLES   = [cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE]
-    self.ANGLES   = self.config.get(GENERATOR, "angles", dvalue=[60, 120, 180, 240, 300])
-    self.debug    = self.config.get(GENERATOR, "debug", dvalue=True)
+    self.rotation = self.config.get(AUGMENTOR, "rotation", dvalue=True)
+
+    self.ANGLES   = self.config.get(AUGMENTOR, "angles", dvalue=[60, 120, 180, 240, 300])
     self.W        = self.config.get(MODEL, "image_width")
     self.H        = self.config.get(MODEL, "image_height")
+    self.hflip    = self.config.get(AUGMENTOR, "hflip", dvalue=True)
+    self.vflip    = self.config.get(AUGMENTOR, "vflip", dvalue=True)
 
   # It applies  horizotanl and vertical flipping operations to image and mask repectively.
   def augment(self, IMAGES, MASKS, image, mask,
@@ -47,27 +51,29 @@ class ImageMaskAugmentor:
     image:  OpenCV image
     mask:   OpenCV mask
     """
-    hflip_image = self.horizontal_flip(image) 
-    hflip_mask  = self.horizontal_flip(mask) 
-    #print("--- hflp_mask shape {}".format(hflip_mask.shape))
-    IMAGES.append(hflip_image )    
-    MASKS.append( hflip_mask  )
-    if self.debug:
-      filepath = os.path.join(generated_images_dir, "hfliped_" + image_basename)
-      cv2.imwrite(filepath, hflip_image)
-      filepath = os.path.join(generated_masks_dir,  "hfliped_" + mask_basename)
-      cv2.imwrite(filepath, hflip_mask)
+    if self.hflip:
+      hflip_image = self.horizontal_flip(image) 
+      hflip_mask  = self.horizontal_flip(mask) 
+      #print("--- hflp_mask shape {}".format(hflip_mask.shape))
+      IMAGES.append(hflip_image )    
+      MASKS.append( hflip_mask  )
+      if self.debug:
+        filepath = os.path.join(generated_images_dir, "hfliped_" + image_basename)
+        cv2.imwrite(filepath, hflip_image)
+        filepath = os.path.join(generated_masks_dir,  "hfliped_" + mask_basename)
+        cv2.imwrite(filepath, hflip_mask)
 
-    vflip_image = self.vertical_flip(image)
-    vflip_mask  = self.vertical_flip(mask)
-    #print("== vflip shape {}".format(vflip_mask.shape))
-    IMAGES.append(vflip_image )    
-    MASKS.append( vflip_mask  )
-    if self.debug:
-      filepath = os.path.join(generated_images_dir, "vfliped_" + image_basename)
-      cv2.imwrite(filepath, vflip_image)
-      filepath = os.path.join(generated_masks_dir,  "vfliped_" + mask_basename)
-      cv2.imwrite(filepath, vflip_mask)
+    if self.vflip:
+      vflip_image = self.vertical_flip(image)
+      vflip_mask  = self.vertical_flip(mask)
+      #print("== vflip shape {}".format(vflip_mask.shape))
+      IMAGES.append(vflip_image )    
+      MASKS.append( vflip_mask  )
+      if self.debug:
+        filepath = os.path.join(generated_images_dir, "vfliped_" + image_basename)
+        cv2.imwrite(filepath, vflip_image)
+        filepath = os.path.join(generated_masks_dir,  "vfliped_" + mask_basename)
+        cv2.imwrite(filepath, vflip_mask)
 
     if self.rotation:
        self.rotate(IMAGES, MASKS, image, mask,

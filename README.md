@@ -1,5 +1,5 @@
 <h2>
-Image-Segmentation-ImageMaskDataGenerator (Updated: 2023/08/22)
+Image-Segmentation-ImageMaskDataGenerator (Fixed: 2023/08/25)
 </h2>
 This is an experimental project to detect <b>Retinal-Vessel</b> by using 
 <a href="./ImageMaskDatasetGenerator.py"> ImageMaskDatasetGenerator</a> and 
@@ -14,7 +14,7 @@ Retinal Image Analysis<br>
 <pre>
 https://blogs.kingston.ac.uk/retinal/chasedb1/
 </pre>
-
+<li>2023/08/25: Fixed some section name setting bugs in ImageMaskDatasetGenerator.py </li>
 <h2>
 1. Installing tensorflow on Windows11
 </h2>
@@ -193,13 +193,16 @@ Please move to <b>./projects/Retina-Vessel</b> directory, and run the following 
 , where train_eval_infer.config is the following.
 <pre>
 ; train_eval_infer.config
-; Retinal-Vessel: generator = True
-; 2023/08/22 antillia.com
+; Retinal-Vessel, GENERATOR-MODE
+; 2023/08/25 antillia.com
 
 [model]
 generator     = True
 image_width    = 512
 image_height   = 512
+;image_width    = 384
+;image_height   = 384
+
 image_channels = 3
 num_classes    = 1
 base_filters   = 16
@@ -209,13 +212,17 @@ dropout_rate   = 0.08
 learning_rate  = 0.0001
 clipvalue      = 0.2
 dilation       = (2,2)
+;loss           = "binary_crossentropy"
 loss           = "bce_iou_loss"
 metrics        = ["iou_coef"]
+;metrics        = ["binary_accuracy", "sensitivity", "specificity"]
 show_summary   = False
 
 [train]
 epochs        = 100
 batch_size    = 4
+steps_per_epoch = 400
+validation_steps = 800
 patience      = 10
 metrics       = ["iou_coef", "val_iou_coef"]
 model_dir     = "./models"
@@ -253,7 +260,8 @@ augmentation   = True
 vflip    = True
 hflip    = True
 rotation = True
-angles   = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300]
+;2023/08/24
+angles   = [90, 180, 270]
 </pre>
 
 You can also specify other loss and metrics functions in the config file.<br>
@@ -267,7 +275,7 @@ On detail of these functions, please refer to <a href="./losses.py">losses.py</a
 <br>
 <br>
 <b>Train console output</b><br>
-<img src="./asset/train_console_output_at_epoch_20_0822.png" width="720" height="auto"><br>
+<img src="./asset/train_console_output_at_epoch_16_0825.png" width="720" height="auto"><br>
 <br>
 <b>Train metrics line graph</b>:<br>
 <img src="./asset/train_metrics.png" width="720" height="auto"><br>
@@ -290,7 +298,7 @@ Please run the following bat file.<br>
 >python ../../TensorflowUNetEvaluator.py ./train_eval_infer.config
 </pre>
 The evaluation result of this time is the following.<br>
-<img src="./asset/evaluate_console_output_at_epoch_20_0822.png" width="720" height="auto"><br>
+<img src="./asset/evaluate_console_output_at_epoch_16_0825.png" width="720" height="auto"><br>
 <br>
 
 
