@@ -1,5 +1,5 @@
 <h2>
-Image-Segmentation-ImageMaskDataGenerator (Fixed: 2023/08/25)
+Image-Segmentation-ImageMaskDataGenerator (Enhanced: 2023/08/26)
 </h2>
 This is an experimental project to detect <b>Retinal-Vessel</b> by using 
 <a href="./ImageMaskDatasetGenerator.py"> ImageMaskDatasetGenerator</a> and 
@@ -15,6 +15,8 @@ Retinal Image Analysis<br>
 https://blogs.kingston.ac.uk/retinal/chasedb1/
 </pre>
 <li>2023/08/25: Fixed some section name setting bugs in ImageMaskAugmentor.py </li>
+<li>2023/08/26: Added Enhanced-Retinal-Vessel to ./projects</li>
+
 <h2>
 1. Installing tensorflow on Windows11
 </h2>
@@ -65,6 +67,26 @@ You can see the following folder structure in Image-Segmentation-ImageMaskDataGe
 ./Image-Segmentation-ImageMaskDataGenerator
 ├─asset
 └─projects
+    ├─Enhanced-Retinal-Vessel
+    │  ├─asset
+    │  ├─eval
+    │  ├─generated_images_dir
+    │  ├─generated_masks_dir
+    │  ├─generator
+    │  │  └─CHASEDB1
+    │  ├─models
+    │  ├─Retinal-Vessel
+    │  │  ├─test
+    │  │  │  ├─images
+    │  │  │  └─masks
+    │  │  ├─train
+    │  │  │  ├─images
+    │  │  │  └─masks
+    │  │  └─valid
+    │  │      ├─images
+    │  │      └─masks
+    │  ├─test_output
+    │  └─test_output_merged
     └─Retinal-Vessel
         ├─eval
         ├─generator
@@ -82,7 +104,6 @@ You can see the following folder structure in Image-Segmentation-ImageMaskDataGe
         │      └─masks
         ├─test_output
         └─test_output_merged
-
 </pre>
 <h3>2.2 Install python packages</h3>
 
@@ -200,8 +221,6 @@ Please move to <b>./projects/Retina-Vessel</b> directory, and run the following 
 generator     = True
 image_width    = 512
 image_height   = 512
-;image_width    = 384
-;image_height   = 384
 
 image_channels = 3
 num_classes    = 1
@@ -323,6 +342,156 @@ dataset, which is a very small dataset including only seven images.<pre>
 <br>
 <b>Inferred masks (test_output)</b><br>
 <img src="./asset/test_output.png" width="1024" height="auto"><br><br>
+
+<!--- 
+ --->
+<h2>
+7 Train TensorflowUNet Model by Enhanced ImageMaskAugmentor
+</h2>
+ We have tried to train Retinal-Vessel TensorflowUNet Model by using slightly Enhanced
+<a href="./ImageMaskAugmentor.py">ImageMaskAugmentor</a> and
+ <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>. <br>
+Please move to <b>./projects/Enhanced-Retina-Vessel</b> directory, and run the following bat file.<br>
+<pre>
+>1.train_by_generator.bat
+</pre>
+, which simply runs the following command.<br>
+<pre>
+>python ../../TensorflowUNetGeneratorTrainer.py ./train_eval_infer.config
+</pre>
+, where train_eval_infer.config is the following.
+<pre>
+; train_eval_infer.config
+; Retinal-Vessel, GENERATOR-MODE
+; 2023/08/26 antillia.com
+
+[model]
+generator     = True
+image_width    = 512
+image_height   = 512
+image_channels = 3
+num_classes    = 1
+base_filters   = 16
+base_kernels   = (7,7)
+num_layers     = 7
+dropout_rate   = 0.08
+learning_rate  = 0.0001
+
+clipvalue      = 0.5
+dilation       = (2,2)
+loss           = "binary_crossentropy"
+metrics        = ["binary_accuracy"]
+show_summary   = False
+
+[train]
+epochs        = 100
+batch_size    = 4
+steps_per_epoch  = 200
+validation_steps = 100
+patience      = 10
+metrics       = ["binary_accuracy", "val_binary_accuracy"]
+model_dir     = "./models"
+eval_dir      = "./eval"
+image_datapath = "./Retinal-Vessel/train/images/"
+mask_datapath  = "./Retinal-Vessel/train/masks/"
+create_backup  = False
+learning_rate_reducer = False
+save_weights_only = True
+
+[eval]
+; valid dataset will be used in training on generator=True.
+image_datapath = "./Retinal-Vessel/valid/images/"
+mask_datapath  = "./Retinal-Vessel/valid/masks/"
+
+[test]
+; Use test dataset for evaluation on generator=True.
+; because valid dataset is already used in training process 
+image_datapath = "./Retinal-Vessel/test/images/"
+mask_datapath  = "./Retinal-Vessel/test/masks/"
+
+[infer] 
+images_dir    = "./Retinal-Vessel/test/images/"
+output_dir    = "./test_output"
+merged_dir    = "./test_output_merged"
+
+[mask]
+blur      = True
+binarize  = True
+threshold = 74
+
+[generator]
+debug     = True
+augmentation   = True
+
+[augmentor]
+vflip    = True
+hflip    = True
+rotation = True
+;2023/08/26
+angles   = [30, 60, 90, 120, 180, 210]
+shrinks  = [0.8]
+</pre>
+
+We have modified loss and metrics functions in this configuration to use the following settings.
+<pre>
+loss           = "binary_crossentropy"
+metrics        = ["binary_accuracy"]
+</pre>
+Please note that each mask-image of this Retinal-Vessel dataset seems to be composed of a lot of white waste thread, not
+something like ellipsoidal or polygonal region.<br> 
+<img src="./asset/Image_10L.jpg" width="512" height="auto">
+<br>
+<br>
+<b>Train console output</b><br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/train_console_output_at_epoch_22_0826.png" width="720" height="auto"><br>
+<br>
+<b>Train metrics line graph</b>:<br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/train_metrics.png" width="720" height="auto"><br>
+
+<br>
+<b>Train losses line graph</b>:<br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/train_losses.png" width="720" height="auto"><br>
+
+
+<h2>
+8 Evaluation
+</h2>
+ We have evaluated prediction accuracy of our Pretrained Retinal-Vessel Model by using <b>test</b> dataset.
+Please move to <b>./projects/Enhanced-Retina-Vessel</b> directory, please run the following bat file.<br>
+<pre>
+>2.evalute.bat
+</pre>
+, which simply run the following command.<br>
+<pre>
+>python ../../TensorflowUNetEvaluator.py ./train_eval_infer.config
+</pre>
+The evaluation result of this time is the following.<br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/evaluate_console_output_at_epoch_22_0826.png" width="720" height="auto"><br>
+<br>
+
+
+<h2>
+9 Inference 
+</h2>
+We have also tried to infer the segmented region for <a href="./projects/Enhanced-Retinal-Vessel/Retinal-Vessel/test/images"><b>
+Retinal-Vessel/test/images</b> </a>
+dataset, which is a very small dataset including only seven images.<pre>
+Please move to <b>./projects/Enhanced-Retina-Vessel</b> directory, please run the following bat file.<br>
+>3.infer.bat
+</pre>
+, which simply runs the following command.<br>
+<pre>
+>python ../../TensorflowUNetInferencer.py ./train_eval_infer.config
+</pre>
+
+<b>Input images (Retinal-Vessel/test/images) </b><br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/test_images.png" width="1024" height="auto"><br>
+<br>
+<b>Ground truth masks (Retinal-Vessel/test/masks) </b><br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/test_masks.png" width="1024" height="auto"><br>
+<br>
+<b>Inferred masks (test_output)</b><br>
+<img src="./projects/Enhanced-Retinal-Vessel/asset/test_output.png" width="1024" height="auto"><br><br>
 
 
 <h3>

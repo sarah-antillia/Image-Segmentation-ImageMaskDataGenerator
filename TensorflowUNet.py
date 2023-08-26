@@ -70,7 +70,7 @@ from tensorflow.keras.losses import  BinaryCrossentropy
 from tensorflow.keras.metrics import BinaryAccuracy
 #from tensorflow.keras.metrics import Mean
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
 from ConfigParser import ConfigParser
 
@@ -133,7 +133,6 @@ class TensorflowUNet:
     # 2023/05/20 Modified to read loss and metrics from train_eval_infer.config file.
     binary_crossentropy = tf.keras.metrics.binary_crossentropy
     binary_accuracy     = tf.keras.metrics.binary_accuracy
-
     # Default loss and metrics functions
     self.loss    = binary_crossentropy
     self.metrics = [binary_accuracy]
@@ -325,7 +324,8 @@ class TensorflowUNet:
     patience   = self.config.get(TRAIN, "patience")
     eval_dir   = self.config.get(TRAIN, "eval_dir")
     model_dir  = self.config.get(TRAIN, "model_dir")
-    save_waits_only = self.config.get(TRAIN, "save_waits_only", dvalue=False)
+    #Modified to correct "save_weights_only" name
+    save_weights_only = self.config.get(TRAIN, "save_weights_only", dvalue=False)
 
     metrics    = ["accuracy", "val_accuracy"]
     try:
@@ -339,39 +339,54 @@ class TensorflowUNet:
     print("-- Copied {} to {}".format(self.config_file, model_dir))
     
     weight_filepath   = os.path.join(model_dir, BEST_MODEL_FILE)
-
+    """
+    lr_reducer = self.config.get(TRAIN, "learning_rate_reducer", dvalue=False )
+    if lr_reducer:
+      reduce_lr = ReduceLROnPlateau(
+                        monitor='val_loss',
+                        factor=0.5,
+                        patience=5,
+                        min_lr=0.0001
+                )
+    """
     early_stopping = EarlyStopping(patience=patience, verbose=1)
     check_point    = ModelCheckpoint(weight_filepath, verbose=1, 
                                      save_best_only=True,
-                                     save_weights_only=save_waits_only)
+                                     save_weights_only=save_weights_only)
     epoch_change   = EpochChangeCallback(eval_dir, metrics)
+    """
+    if lr_reducer:
+      callbacks = [early_stopping, check_point, epoch_change, reduce_lr]
+    else:
+    """
+    callbacks = [early_stopping, check_point, epoch_change]
+
     if type(train_generator) == list and type(valid_generator) == list:
       x_train = train_generator
       y_train = valid_generator
       # By the parameter setting : validation_split=0.2,
       # x_train and y_train will be split into real_train (0.8) and 0.2 real_valid (0.2) 
-      results = self.model.fit(x_train, y_train, 
+      history = self.model.fit(x_train, y_train, 
                     validation_split=0.2, 
                     batch_size=batch_size, 
                     epochs=epochs, 
                     shuffle=False,
-                    callbacks=[early_stopping, check_point, epoch_change],
+                    callbacks=callbacks,
                     verbose=1)
       
-      print("=== train result {}".format(result))
     else:
       # train and valid dataset will be used by train_generator and valid_generator respectively
       steps_per_epoch  = self.config.get(TRAIN, "steps_per_epoch",  dvalue= 400)
       validation_steps = self.config.get(TRAIN, "validation_steps", dvalue=800)
-      results = self.model.fit(train_generator, 
+      history = self.model.fit(train_generator, 
                     steps_per_epoch=steps_per_epoch,
                     epochs=epochs, 
                     validation_data=valid_generator,
                     validation_steps= validation_steps,
                     shuffle = False,
-                    callbacks=[early_stopping, check_point, epoch_change],
+                    callbacks=callbacks,
                     verbose=1)
-      print("=== train result {}".format(results))
+      
 
   # 2023/05/09
   def load_model(self) :

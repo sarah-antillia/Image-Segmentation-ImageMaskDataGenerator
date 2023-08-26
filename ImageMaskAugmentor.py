@@ -16,6 +16,7 @@
 # ImageMaskAugmentor.py
 # 2023/08/20 to-arai
 # 2023/08/25 Fixed bugs on some wrong section name settings.
+# 2023/08/26 Added shrink method to augment images and masks.
 
 import os
 import sys
@@ -32,12 +33,12 @@ class ImageMaskAugmentor:
   def __init__(self, config_file):
     self.config  = ConfigParser(config_file)
     self.debug    = self.config.get(GENERATOR, "debug",  dvalue=True)
+    self.W        = self.config.get(MODEL,     "image_width")
+    self.H        = self.config.get(MODEL,     "image_height")
 
     self.rotation = self.config.get(AUGMENTOR, "rotation", dvalue=True)
-
-    self.ANGLES   = self.config.get(AUGMENTOR, "angles", dvalue=[60, 120, 180, 240, 300])
-    self.W        = self.config.get(MODEL, "image_width")
-    self.H        = self.config.get(MODEL, "image_height")
+    self.SHRINKS  = self.config.get(AUGMENTOR, "shrinks",  dvalue=[0.8])
+    self.ANGLES   = self.config.get(AUGMENTOR, "angles",   dvalue=[60, 120, 180, 240, 300])
     self.hflip    = self.config.get(AUGMENTOR, "hflip", dvalue=True)
     self.vflip    = self.config.get(AUGMENTOR, "vflip", dvalue=True)
 
@@ -79,6 +80,11 @@ class ImageMaskAugmentor:
        self.rotate(IMAGES, MASKS, image, mask,
                  generated_images_dir, image_basename,
                  generated_masks_dir,  mask_basename )
+       
+    if type(self.SHRINKS) is list and len(self.SHRINKS)>0:
+       self.shrink(IMAGES, MASKS, image, mask,
+                 generated_images_dir, image_basename,
+                 generated_masks_dir,  mask_basename )
 
   def horizontal_flip(self, image): 
     image = image[:, ::-1, :]
@@ -110,3 +116,55 @@ class ImageMaskAugmentor:
         filepath = os.path.join(generated_masks_dir,  "rotated_" + str(angle) + "_" + mask_basename)
         cv2.imwrite(filepath, rotated_mask)
   
+
+  def shrink(self, IMAGES, MASKS, image, mask,
+                generated_images_dir, image_basename,
+                generated_masks_dir,  mask_basename ):
+    # 2023/08/26
+    # Added the following shrinking augmentation.
+    h, w = image.shape[:2]
+  
+    for shrink in self.SHRINKS:
+      rw = int (w * shrink)
+      rh = int (h * shrink)
+      resized_image = cv2.resize(image, dsize= (rw, rh),  interpolation=cv2.INTER_NEAREST)
+      resized_mask  = cv2.resize(mask,  dsize= (rw, rh),  interpolation=cv2.INTER_NEAREST)
+      
+      squared_image = self.paste(resized_image, mask=False)
+      squared_mask  = self.paste(resized_mask,  mask=True)
+      IMAGES.append(squared_image)
+      MASKS.append(squared_mask)
+      if self.debug:
+        ratio   = str(shrink).replace(".", "_")
+        image_filename = "shrinked_" + ratio + "_" + image_basename
+        image_filepath  = os.path.join(generated_images_dir, image_filename)
+        cv2.imwrite(image_filepath, squared_image)
+        #print("=== Saved {}".format(image_filepath))
+    
+        mask_filename = "shrinked_" + ratio + "_" + mask_basename
+        mask_filepath  = os.path.join(generated_masks_dir, mask_filename)
+        cv2.imwrite(mask_filepath, squared_mask)
+        #print("=== Saved {}".format(mask_filepath))
+
+
+  def paste(self, image, mask=False):
+    l = len(image.shape)
+   
+    h, w,  = image.shape[:2]
+
+    if l==3:
+      background = np.zeros((self.H, self.W, 3), dtype=np.uint8)
+      (b, g, r) = image[h-10][w-10] 
+      #print("r:{} g:{} b:c{}".format(b,g,r))
+      background += [b, g, r][::-1]
+    else:
+      v =  image[h-10][w-10] 
+      #print("x {}".format(v))
+      image  = np.expand_dims(image, axis=-1) 
+      background = np.zeros((self.H, self.W, 1), dtype=np.uint8)
+      background[background !=v] = v
+    x = (self.W - w)//2
+    y = (self.H - h)//2
+    background[y:y+h, x:x+w] = image
+
+    return background
