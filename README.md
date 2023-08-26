@@ -439,7 +439,7 @@ metrics        = ["binary_accuracy"]
 </pre>
 Please note that each mask-image of this Retinal-Vessel dataset seems to be composed of a lot of white waste thread, not
 something like ellipsoidal or polygonal region. So, It's worth to try the loss function based on cross_entropy,
-not iou. <br> 
+not iou. <br><br>
 <img src="./asset/Image_10L.jpg" width="512" height="auto">
 <br>
 <br>
