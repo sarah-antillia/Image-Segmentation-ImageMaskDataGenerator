@@ -1,5 +1,5 @@
 <h2>
-Image-Segmentation-ImageMaskDataGenerator (Enhanced: 2023/08/26)
+Image-Segmentation-ImageMaskDataGenerator (Enhanced: 2023/08/27)
 </h2>
 This is an experimental project to detect <b>Retinal-Vessel</b> by using 
 <a href="./ImageMaskDatasetGenerator.py"> ImageMaskDatasetGenerator</a> and 
@@ -14,8 +14,9 @@ Retinal Image Analysis<br>
 <pre>
 https://blogs.kingston.ac.uk/retinal/chasedb1/
 </pre>
-<li>2023/08/25: Fixed some section name setting bugs in ImageMaskAugmentor.py </li>
-<li>2023/08/26: Added Enhanced-Retinal-Vessel to ./projects</li>
+<li>2023/08/25: Fixed some section name setting bugs in ImageMaskAugmentor.py. </li>
+<li>2023/08/26: Added Enhanced-Retinal-Vessel to ./projects.</li>
+<li>2023/08/27: Added shear method to ImageMaskAugmentor.py to augment images and masks.</li>
 
 <h2>
 1. Installing tensorflow on Windows11
