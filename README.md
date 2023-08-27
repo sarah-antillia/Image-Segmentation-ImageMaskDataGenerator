@@ -306,7 +306,7 @@ On detail of these functions, please refer to <a href="./losses.py">losses.py</a
 
 
 <h2>
-4 Evaluation
+5 Evaluation
 </h2>
  We have evaluated prediction accuracy of our Pretrained Retinal-Vessel Model by using <b>test</b> dataset.
 Please run the following bat file.<br>
