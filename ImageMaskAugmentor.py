@@ -183,6 +183,8 @@ class ImageMaskAugmentor:
 
   # Shear image and mask
   # 2023/08/27 Added shear method to augment images and masks.
+  # The top procedure of this method has been taken from the following stackoverlfow.
+  # https://stackoverflow.com/questions/57881430/how-could-i-implement-a-centered-shear-an-image-with-opencv
   def shear(self, IMAGES, MASKS, image, mask,
                  generated_images_dir, image_basename,
                  generated_masks_dir,  mask_basename ):
