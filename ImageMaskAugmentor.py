@@ -18,11 +18,14 @@
 # 2023/08/25 Fixed bugs on some wrong section name settings.
 # 2023/08/26 Added shrink method to augment images and masks.
 # 2023/08/27 Added shear method to augment images and masks.
+# 2023/08/28 Added elastic_transorm method to augment images and masks.
 
 import os
 import sys
 import numpy as np
 import cv2
+from scipy.ndimage.interpolation import map_coordinates
+from scipy.ndimage.filters import gaussian_filter
 from ConfigParser import ConfigParser
 
 MODEL     = "model"
@@ -45,7 +48,11 @@ class ImageMaskAugmentor:
 
     self.hflip    = self.config.get(AUGMENTOR, "hflip", dvalue=True)
     self.vflip    = self.config.get(AUGMENTOR, "vflip", dvalue=True)
-
+    self.transformer = self.config.get(AUGMENTOR, "transformer", dvalue=False)
+    self.alpha    = self.config.get(AUGMENTOR, "alpah", dvalue=1300)
+    self.sigmoid  = self.config.get(AUGMENTOR, "sigmoid", dvalue=8)
+    self.seed     = 137
+  
   # It applies  horizotanl and vertical flipping operations to image and mask repectively.
   def augment(self, IMAGES, MASKS, image, mask,
                 generated_images_dir, image_basename,
@@ -94,6 +101,11 @@ class ImageMaskAugmentor:
 
     if type(self.SHEARS) is list and len(self.SHEARS)>0:
        self.shear(IMAGES, MASKS, image, mask,
+                 generated_images_dir, image_basename,
+                 generated_masks_dir,  mask_basename )
+    # 2023/08/28
+    if self.transformer:
+      self.elastic_transform(IMAGES, MASKS, image, mask,
                  generated_images_dir, image_basename,
                  generated_masks_dir,  mask_basename )
 
@@ -183,8 +195,6 @@ class ImageMaskAugmentor:
 
   # Shear image and mask
   # 2023/08/27 Added shear method to augment images and masks.
-  # The top procedure of this method has been taken from the following stackoverlfow.
-  # https://stackoverflow.com/questions/57881430/how-could-i-implement-a-centered-shear-an-image-with-opencv
   def shear(self, IMAGES, MASKS, image, mask,
                  generated_images_dir, image_basename,
                  generated_masks_dir,  mask_basename ):
@@ -256,4 +266,57 @@ class ImageMaskAugmentor:
         #print("Saved {}".format(filepath))
 
     
+  # This method has been taken from the following code.
+  # https://github.com/MareArts/Elastic_Effect/blob/master/Elastic.py
+  #
+  # https://cognitivemedium.com/assets/rmnist/Simard.pdf
+  #
+  # See also
+  # https://www.kaggle.com/code/jiqiujia/elastic-transform-for-data-augmentation/notebook
+
+  def elastic_transform(self, IMAGES, MASKS, image, mask,
+                generated_images_dir, image_basename,
+                generated_masks_dir,  mask_basename ):
+    """Elastic deformation of images as described in [Simard2003]_.
+    .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
+       Convolutional Neural Networks applied to Visual Document Analysis", in
+       Proc. of the International Conference on Document Analysis and
+       Recognition, 2003.
+    """
+    random_state = np.random.RandomState(self.seed)
+
+    shape = image.shape
+    dx = gaussian_filter((random_state.rand(*shape) * 2 - 1), self.sigmoid, mode="constant", cval=0) * self.alpha
+    dy = gaussian_filter((random_state.rand(*shape) * 2 - 1), self.sigmoid, mode="constant", cval=0) * self.alpha
+    #dz = np.zeros_like(dx)
+
+    x, y, z = np.meshgrid(np.arange(shape[1]), np.arange(shape[0]), np.arange(shape[2]))
+    indices = np.reshape(y+dy, (-1, 1)), np.reshape(x+dx, (-1, 1)), np.reshape(z, (-1, 1))
+
+    deformed_image = map_coordinates(image, indices, order=1, mode='nearest')  
+    deformed_image = deformed_image.reshape(image.shape)
+
+    shape = mask.shape
+    dx = gaussian_filter((random_state.rand(*shape) * 2 - 1), self.sigmoid, mode="constant", cval=0) * self.alpha
+    dy = gaussian_filter((random_state.rand(*shape) * 2 - 1), self.sigmoid, mode="constant", cval=0) * self.alpha
+    #dz = np.zeros_like(dx)
+
+    x, y, z = np.meshgrid(np.arange(shape[1]), np.arange(shape[0]), np.arange(shape[2]))
+    indices = np.reshape(y+dy, (-1, 1)), np.reshape(x+dx, (-1, 1)), np.reshape(z, (-1, 1))
+    deformed_mask = map_coordinates(mask, indices, order=1, mode='nearest')  
+    deformed_mask = deformed_mask.reshape(mask.shape)
+
+    IMAGES.append(deformed_image)
+    MASKS.append(deformed_mask)
+
+    if self.debug:
+      image_filename = "elastic" + "_alpha_" + str(self.alpha) + "_sigmoid_" +str(self.sigmoid) + "_" + image_basename
+      image_filepath  = os.path.join(generated_images_dir, image_filename)
+      cv2.imwrite(image_filepath, deformed_image)
+      #print("=== Saved {}".format(image_filepath))
+    
+      mask_filename = "elastic" + "_alpha_" + str(self.alpha) + "_sigmoid_" +str(self.sigmoid) + "_" + mask_basename
+      mask_filepath  = os.path.join(generated_masks_dir, mask_filename)
+      cv2.imwrite(mask_filepath, deformed_mask)
+
 
