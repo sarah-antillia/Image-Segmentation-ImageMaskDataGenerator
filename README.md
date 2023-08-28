@@ -251,9 +251,10 @@ sigmoid     = 8
  <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>.
 <br>
 <br>
-<!--
+
 <b>TensorflowUNetGeneratorTrainer.py</b><br>
-<pre>
+
+```
 if __name__ == "__main__":
   try:
     config_file    = "./train_eval_infer.config"
@@ -273,10 +274,8 @@ if __name__ == "__main__":
 
   except:
     traceback.print_exc()
-
-</pre>
+```
 <br>
--->
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
 
 <pre>
