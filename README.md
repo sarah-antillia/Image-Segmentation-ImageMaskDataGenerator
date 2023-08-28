@@ -591,3 +591,24 @@ Toshiyuki Arai @antillia.com<br>
 <pre>
 https://github.com/sarah-antillia/Image-Segmentation-Retinal-Vessel
 </pre>
+
+<b>3. Best Practices for Convolutional Neural Networks Applied to Visual Document Analysis</b><br>
+Patrice Y. Simard, Dave Steinkraus, John C. Plat<br>
+<pre>
+https://cognitivemedium.com/assets/rmnist/Simard.pdf
+</pre>
+
+<b>4. Elastic Transform for Data Augmentation</b><br>
+<pre>
+https://www.kaggle.com/code/jiqiujia/elastic-transform-for-data-augmentation/notebook
+</pre>
+
+<b>5. Elastic_Effect</b><br>
+<pre>
+https://github.com/MareArts/Elastic_Effect
+</pre>
+
+<b>6. How could I implement a centered shear an image with opencv</b><br>
+<pre>
+https://stackoverflow.com/questions/57881430/how-could-i-implement-a-centered-shear-an-image-with-opencv
+</pre>
