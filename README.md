@@ -248,8 +248,34 @@ sigmoid     = 8
 4 Train TensorflowUNet Model by ImageMaskDatasetGenerator
 </h2>
  We have trained Retinal-Vessel TensorflowUNet Model by using 
- <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>. <br>
+ <b>train_eval_infer.config</b> file and <a href="./TensorflowUNetGeneratorTrainer.py">TensorflowUNetGeneratorTrainer.py</a>.
+<br>
+
+<pre>
+if __name__ == "__main__":
+  try:
+    config_file    = "./train_eval_infer.config"
+    if len(sys.argv) == 2:
+      config_file = sys.argv[1]
+
+    # Create a UNetMolde and compile
+    model   = TensorflowUNet(config_file)
+        
+    train_gen = ImageMaskDatasetGenerator(config_file, dataset=TRAIN)
+    train_generator = train_gen.generate()
+
+    valid_gen = ImageMaskDatasetGenerator(config_file, dataset=EVAL)
+    valid_generator = valid_gen.generate()
+
+    model.train(train_generator, valid_generator)
+
+  except:
+    traceback.print_exc()
+
+</pre>
+<br>
 Please move to <b>./projects/Retina-Vessel</b> directory, and run the following bat file.<br>
+
 <pre>
 >1.train_by_generator.bat
 </pre>
