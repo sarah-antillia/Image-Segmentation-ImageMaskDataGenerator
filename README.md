@@ -210,7 +210,7 @@ and Y a set of augmented masks corresponding to X.
 3.5. ImageMaskAugmentor
 </h3>
 The augment method of <a href="./ImageMaskAugmentor.py">ImageMaskAugmentor</a> augments images and masks
-in various ways depending on parameters in <b>augment</b> section of <b>train_eval_infer.config</b>.<br>
+in various ways depending on parameters in <b>augmentor</b> section of <b>train_eval_infer.config</b>.<br>
 <pre>
 [augmentor]
 vflip    = True
@@ -218,10 +218,10 @@ hflip    = True
 rotation = True
 angles   = [30, 60, 90, 120, 180, 210]
 shrinks  = [0.8]
-shears   = []
+shears   = [0.2]
 
 ;2023/08/28 For elastic_transform 
-transformer = False
+transformer = True
 alpah       = 1300
 sigmoid     = 8
 </pre>
