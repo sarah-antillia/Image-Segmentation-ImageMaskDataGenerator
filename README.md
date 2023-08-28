@@ -385,7 +385,7 @@ Please move to <b>./projects/Enhanced-Retina-Vessel</b> directory, and run the f
 <pre>
 ; train_eval_infer.config
 ; Retinal-Vessel, GENERATOR-MODE
-; 2023/08/26 antillia.com
+; 2023/08/28 (C) antillia.com
 
 [model]
 generator     = True
