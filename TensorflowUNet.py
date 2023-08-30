@@ -360,8 +360,7 @@ class TensorflowUNet:
     else:
     """
     callbacks = [early_stopping, check_point, epoch_change]
-
-    if type(train_generator) == list and type(valid_generator) == list:
+    if type(train_generator) == np.ndarray and type(valid_generator) == np.ndarray:
       x_train = train_generator
       y_train = valid_generator
       # By the parameter setting : validation_split=0.2,
